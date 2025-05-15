@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Accident Risk Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            text-align: center;
+        }
+        form {
+            background: #f0f0f0;
+            padding: 30px;
+            margin-top: 100px;
+            display: inline-block;
+            box-shadow: 0 0 10px #999;
+            border-radius: 10px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            width: 250px;
+            border-radius: 5px;
+        }
+        input {
+            background-color: #e0e0e0;
+            border: 2px solid #ccc;
+        }
+        input:focus {
+            border-color: #007bff;
+            background-color: #d1d1d1;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <form action="/map" method="POST">
+        <h2>Enter Start & Destination</h2>
+        <input type="text" name="start" placeholder="Start Location" required><br>
+        <input type="text" name="end" placeholder="Destination" required><br>
+        <input type="number" name="speed" placeholder="Speed (km/h)" required><br>
+        <button type="submit">Check Risk</button>
+    </form>
+</body>
+</html>

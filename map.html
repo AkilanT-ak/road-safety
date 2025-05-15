@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Route and Risk</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            height: 500px;
+            width: 80%;
+            margin: auto;
+        }
+        .info {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 20px;
+            color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div class="info">
+        <p><strong>Accident Risk Level:</strong> {{ risk }}</p>
+        <p><strong>Weather:</strong> {{ weather }}</p>
+    </div>
+
+    <script>
+        function initMap() {
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer();
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 7, center: { lat: 13.0827, lng: 80.2707 }
+            });
+            directionsRenderer.setMap(map);
+            directionsService.route({
+                origin: "{{ start }}",
+                destination: "{{ end }}",
+                travelMode: 'DRIVING'
+            }, function(response, status) {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(response);
+                } else {
+                    alert("Directions failed: " + status);
+                }
+            });
+        }
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBE7mynuvfqlMGXTJna66JFRXggEN3TNJk&callback=initMap">
+    </script>
+</body>
+</html>
