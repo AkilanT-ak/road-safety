@@ -1,56 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Route and Risk</title>
+    <title>Route Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
-        body {
-            background-color: black;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
-        #map {
-            height: 500px;
-            width: 80%;
-            margin: auto;
-        }
-        .info {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 20px;
-            color: #f1f1f1;
-        }
+        #map { height: 500px; width: 100%; }
     </style>
 </head>
 <body>
+    <h2>Risk Level: {{ risk }}</h2>
+    <h3>Weather: {{ weather }}</h3>
     <div id="map"></div>
-    <div class="info">
-        <p><strong>Accident Risk Level:</strong> {{ risk }}</p>
-        <p><strong>Weather:</strong> {{ weather }}</p>
-    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.min.js"></script>
 
     <script>
-        function initMap() {
-            const directionsService = new google.maps.DirectionsService();
-            const directionsRenderer = new google.maps.DirectionsRenderer();
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 7, center: { lat: 13.0827, lng: 80.2707 }
+        const map = L.map('map').setView([20.5937, 78.9629], 5);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+        }).addTo(map);
+
+        const start = "{{ start }}";
+        const end = "{{ end }}";
+
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${start}`)
+            .then(res => res.json())
+            .then(startData => {
+                const startLat = parseFloat(startData[0].lat);
+                const startLon = parseFloat(startData[0].lon);
+
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${end}`)
+                    .then(res => res.json())
+                    .then(endData => {
+                        const endLat = parseFloat(endData[0].lat);
+                        const endLon = parseFloat(endData[0].lon);
+
+                        L.Routing.control({
+                            waypoints: [
+                                L.latLng(startLat, startLon),
+                                L.latLng(endLat, endLon)
+                            ],
+                            routeWhileDragging: false
+                        }).addTo(map);
+                    });
             });
-            directionsRenderer.setMap(map);
-            directionsService.route({
-                origin: "{{ start }}",
-                destination: "{{ end }}",
-                travelMode: 'DRIVING'
-            }, function(response, status) {
-                if (status === 'OK') {
-                    directionsRenderer.setDirections(response);
-                } else {
-                    alert("Directions failed: " + status);
-                }
-            });
-        }
-    </script>
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBE7mynuvfqlMGXTJna66JFRXggEN3TNJk&callback=initMap">
     </script>
 </body>
 </html>
